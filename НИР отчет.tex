@@ -4,6 +4,8 @@
 \usepackage{amssymb}
 \usepackage[russian]{babel}
 \usepackage{amsmath}
+%Объединение строк
+\usepackage{multirow}
 
 %Картинки
 \usepackage{graphicx}
@@ -152,6 +154,10 @@
 \usepackage{enumitem}
 \setlist{nosep, leftmargin=\parindent}
 
+% объявляем новую команду для переноса строки внутри ячейки таблицы
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
 %Начало документа
 \begin{document}
 \renewcommand*\contentsname{\parindent=1.25cm Содержание}
@@ -187,7 +193,7 @@
 \input{bibliography}
 
 %Приложения
-%\input{applications}
+\input{applications}
 
 %\includepdf[pages=-]{tz.pdf}
 

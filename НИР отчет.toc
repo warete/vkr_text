@@ -22,8 +22,14 @@
 \contentsline {subsubsection}{\numberline {2.4.2}Разработка фронтенд-части и связь с API}{\hfil \Large 27\hfil }%
 \contentsline {subsubsection}{\numberline {2.4.3}Разработка Unit-тестов}{\hfil \Large 30\hfil }%
 \contentsline {section}{\numberline {3}\Large Применение методов машинного обучения для классификации данных компьютерного моделирования}{\hfil \Large 32\hfil }%
-\contentsline {subsection}{\numberline {3.1}Обучение модели и классификация тестовой выборки}{\hfil \Large 32\hfil }%
-\contentsline {subsection}{\numberline {3.2}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large 34\hfil }%
-\contentsline {section}{Заключение}{\hfil \Large 37\hfil }%
-\contentsline {subsection}{Список литературы}{\hfil \Large 38\hfil }%
+\contentsline {subsection}{\numberline {3.1}Показатели информативности диагностики}{\hfil \Large 32\hfil }%
+\contentsline {subsection}{\numberline {3.2}Частотный анализ классифицируемых данных}{\hfil \Large 33\hfil }%
+\contentsline {subsection}{\numberline {3.3}Обучение модели и классификация тестовой выборки}{\hfil \Large 37\hfil }%
+\contentsline {subsection}{\numberline {3.4}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large 40\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.1}Зависимость результата классификации от соотношения обучающей и тестовой выборок}{\hfil \Large 40\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.2}Зависимость результата классификации от соотношения количества больных и здоровых пациентов в выборке}{\hfil \Large 42\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.3}Определение точки с опухолью}{\hfil \Large 43\hfil }%
+\contentsline {section}{Заключение}{\hfil \Large 45\hfil }%
+\contentsline {subsection}{Список литературы}{\hfil \Large 46\hfil }%
+\contentsline {section}{Приложение А (обязательное) Программный код}{\hfil \Large 52\hfil }%
 \contentsfinish 

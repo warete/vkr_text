@@ -9,28 +9,1121 @@
 \end{center} 
 \vspace{8mm}
 \par
-Листинг А.1 -- Код программы для классификации данных компьютерного моделирования яркостной температуры
+Листинг А.1 -- Код Flask-приложения с API-методами
 \vspace{8mm}
 \large
 \begin{verbatim}
+from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
+import json
+import os
+import shutil
+from sklearn.metrics import accuracy_score
+
+from vkr import Vkr
+from utils import CustomFlask, allowed_file, clear_pickle_fi
+les
+
+# instantiate the app
+app = CustomFlask(__name__, static_folder="assets")
+app.config.from_object(__name__)
+app.config['DEBUG'] = True
+app.config['DATA_DIR'] = 'data/'
+
+# enable CORS
+CORS(app)
+
+# Vkr instance
+VkrInstance = Vkr()
+VkrInstance.set_data_dir(dir=app.config['DATA_DIR'])
+VkrInstance.data_file = 'data.csv'
+VkrInstance.check_or_copy_data_file()
+VkrInstance.init()
+
+
+@app.route('/')
+def index():
+    return render_template('index.html', debug=app.debug, ho
+st=request.host_url,
+                           filepath=app.config['DATA_DIR'] +
+ VkrInstance.data_file)
+
+
+@app.route('/train/', methods=['POST'])
+def train():
+    post_data = json.loads(request.get_data())
+    response = {
+        'status': 'error',
+    }
+    if post_data.get('method') in VkrInstance.methods:
+        clf = VkrInstance.get_fitted_model(post_data.get('me
+thod'), post_data.get('testPercent'), True)
+        response['status'] = 'success'
+        response['method'] = {
+            'code': post_data.get('method'),
+            'id': post_data.get('methodId')
+        }
+    return jsonify(response)
+
+
+@app.route('/predict/', methods=['POST'])
+def predict():
+    post_data = json.loads(request.get_data())
+    response = {
+        'status': 'error',
+    }
+
+    if post_data.get('method') in VkrInstance.methods:
+        if VkrInstance.need_fit_model(post_data.get('method'
+), post_data.get('testPercent')):
+            response['status'] = 'warning'
+            response['message'] = 'Нужно сначала
+ обучить'
+        else:
+            clf = VkrInstance.get_fitted_model(post_data.get
+('method'), post_data.get('testPercent'))
+            yPred = clf.predict(VkrInstance.xTest)
+            accuracy = accuracy_score(VkrInstance.yTest, yPr
+ed)
+            response['status'] = 'success'
+            response['metrics'] = {
+                'accuracy': accuracy,
+                'sensitivity': VkrInstance.calculate_sensiti
+vity(yPred) * 100,
+                'specificity': VkrInstance.calculate_specifi
+city(yPred) * 100
+            }
+    return jsonify(response)
+
+
+@app.route('/static_metrics/', methods=['POST'])
+def static_metrics():
+    try:
+        post_data = json.loads(request.get_data())
+        response = {
+            'status': 'success',
+            'metrics': {
+                'frequencyTemperature': VkrInstance.get_temp
+_freq(),
+                'frequencyTumor': VkrInstance.get_tumor_freq
+()
+            }
+        }
+    except Exception as e:
+        response = {
+            'status': 'error',
+            'message': e.message
+        }
+
+    return jsonify(response)
+
+
+@app.route('/methods/', methods=['POST'])
+def methods():
+    formatted_methods = {}
+    i = 0
+    for key in VkrInstance.methods:
+        formatted_methods[i] = {
+            'name': VkrInstance.methods[key]['name'],
+            'code': key,
+            'canPredict': True,
+            'metrics': {
+                'sensitivity': 0,
+                'specificity': 0,
+                'accuracy': []
+            }
+        }
+        i += 1
+    response = {
+        'status': 'success',
+        'methods': formatted_methods
+    }
+
+    return jsonify(response)
+
+
+@app.route('/diagnose/', methods=['POST'])
+def diagnose():
+    post_data = json.loads(request.get_data())
+    response = {
+        'status': 'error',
+    }
+
+    if post_data.get('method') in VkrInstance.methods:
+        if VkrInstance.need_fit_model(post_data.get('method'
+)):
+            response['status'] = 'warning'
+            response['message'] = 'Нужно сначала
+ обучить'
+        else:
+            diagnose_class, predicted_point, accuracy = VkrI
+nstance.get_diagnose(post_data.get('method'),
+                                                            
+           post_data.get('testPercent'),
+                                                            
+           post_data.get('patientData'))
+
+            response['status'] = 'success'
+            response['result'] = {
+                'class': str(diagnose_class),
+                'point': str(predicted_point),
+                'accuracy': accuracy
+            }
+
+    return jsonify(response)
+
+
+@app.route('/upload_data/', methods=['POST'])
+def upload_data():
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        file_path = os.path.join(app.config['DATA_DIR'], Vkr
+Instance.data_file)
+        # бэкап старого файла
+        shutil.copyfile(os.path.join(app.config['DATA_DIR'],
+ VkrInstance.data_file),
+                  os.path.join(app.config['DATA_DIR'], 'old_
+' + VkrInstance.data_file))
+        file.save(file_path)
+
+        # Удаляем старые pickle-файлы
+        clear_pickle_files(app.config['DATA_DIR'])
+        # Перечитаем файл с данными
+        # VkrInstance.init()
+        print("lol")
+        return jsonify({
+            'status': 'success',
+            'result': {
+                'file_path': file_path
+            }
+        })
+    else:
+        return jsonify({
+            'status': 'error',
+            'result': {
+                'message': 'Неподходящий тип 
+файла'
+            }
+        })
+
+
+if __name__ == '__main__':
+    app.run(debug=app.debug)
 
 \end{verbatim}
 \vspace{8mm}
 \Large
 \par
-Листинг А.2 -- Код программы для отображения результатов частотного анализа
+Листинг А.2 -- Код класса Vkr из бекэнд-части приложения
 \vspace{8mm}
 \large
 \begin{verbatim}
+import shutil
+
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import pickle
+import os.path
+from sklearn.svm import SVC
+from sklearn import neighbors
+from sklearn.ensemble import BaggingClassifier
+from sklearn.linear_model import SGDClassifier
+from sklearn.gaussian_process import GaussianProcessClassifi
+er
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoos
+tClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscrimin
+antAnalysis
+from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from io import StringIO
+
+
+class Vkr:
+    data_dir = 'data/'
+    data_file = 'data.cv'
+    data = pd.DataFrame()
+    temp_columns = ['0ртм', '1ртм', '2ртм', '3рт', '4ртм', '5ртм', '6ртм', '7ртм', '8ртм',
+                    '0ик', '1ик', '2ик', '3ик', '4и
+к', '5ик', '6ик', '7ик', '8ик']
+
+    methods = {}
+
+    xTrain, yTrain, xTest, yTest = [], [], [], []
+
+    def init(self):
+        self.xTrain, self.xTest, self.yTrain, self.yTest = s
+elf.get_train_test_data(
+            0.25)
+        self.set_methods({
+            'svm': {
+                'name': 'SVC',
+                'clf': SVC(gamma='scale')
+            },
+            'knn': {
+                'name': 'k-ближайших соседей
+',
+                'clf': neighbors.KNeighborsClassifier(5, wei
+ghts='uniform')
+            },
+            'bagging': {
+                'name': 'Bagging meta-estimator + SVM',
+                'clf': BaggingClassifier(SVC(gamma='scale'),
+ max_samples=0.5, max_features=0.5)
+            },
+            'sgd': {
+                'name': 'Stochastic Gradient Descent',
+                'clf': SGDClassifier()
+            },
+            'gaussianprocessclassifier': {
+                'name': 'Gaussian Process Classifier',
+                'clf': GaussianProcessClassifier(1.0 * RBF(1
+.0))
+            },
+            'decisiontreeclassifier': {
+                'name': 'Decision Tree Classifier',
+                'clf': DecisionTreeClassifier(max_depth=5)
+            },
+            'randomforestclassifier': {
+                'name': 'Random Forest Classifier',
+                'clf': RandomForestClassifier(max_depth=5, n
+_estimators=10, max_features=1)
+            },
+            'mlpclassifier': {
+                'name': 'MLP Classifier',
+                'clf': MLPClassifier(alpha=1, max_iter=1000)
+            },
+            'adaboostclassifier': {
+                'name': 'Ada Boost Classifier',
+                'clf': AdaBoostClassifier()
+            },
+            'quadraticdiscriminantanalysis': {
+                'name': 'Quadratic Discriminant Analysis',
+                'clf': QuadraticDiscriminantAnalysis()
+            }
+        })
+
+    def set_data_dir(self, dir):
+        self.data_dir = dir
+
+    def set_methods(self, methods):
+        self.methods = methods
+
+    def get_train_test_data(self, test_sizе):
+        with open(self.data_dir + self.data_file, "r") as f:
+            self.data = pd.read_csv(StringIO(f.read()),
+                                    delimiter=',',
+                                    names=['0ртм', '1рт
+м', '2ртм', '3ртм', '4ртм', '5ртм', '6ртм', 
+'7ртм', '8ртм',
+                                           '0ик', '1ик',
+ '2ик', '3ик', '4ик', '5ик', '6ик', '7ик', '8и??', 'target',
+                                           'position'])
+            f.close()
+
+        return train_test_split(
+            self.data[self.temp_columns],
+            self.data.target,
+            test_size=test_sizе,
+            random_state=0
+        )
+
+    def get_pickled_file_name(self, model_name):
+        return self.data_dir + 'model_' + model_name + '_fit
+ted.pickle'
+
+    def need_fit_model(self, name, test_percent=25):
+        return os.path.isfile(self.get_pickled_file_name(nam
+e + '_' + str(test_percent))) == False
+
+    def get_fitted_model(self, name, test_percent=25, need_f
+it=False):
+        if self.need_fit_model(name, test_percent) or need_f
+it:
+            self.xTrain, self.xTest, self.yTrain, self.yTest
+ = self.get_train_test_data(test_percent / 100)
+            self.methods[name]['clf'] = self.methods[name]['
+clf'].fit(self.xTrain, self.yTrain)
+            with open(self.get_pickled_file_name(name + '_' 
++ str(test_percent)), 'wb') as f:
+                pickle.dump(self.methods[name]['clf'], f)
+        else:
+            with open(self.get_pickled_file_name(name + '_' 
++ str(test_percent)), 'rb') as f:
+                self.methods[name]['clf'] = pickle.load(f)
+
+        return self.methods[name]['clf']
+
+    def calculate_sensitivity(self, yPred):
+        sick_test_cnt = len(self.yTest[self.yTest == 1])
+        sick_pred_cnt = len(yPred[yPred == 1])
+        return sick_pred_cnt / (sick_pred_cnt + abs(sick_tes
+t_cnt - sick_pred_cnt))
+
+    def calculate_specificity(self, yPred):
+        healthy_test_cnt = len(self.yTest[self.yTest == 0])
+        healthy_pred_cnt = len(yPred[yPred == 0])
+        return healthy_pred_cnt / (healthy_pred_cnt + abs(he
+althy_test_cnt - healthy_pred_cnt))
+
+    def get_temp_freq(self):
+        return self.data[['0ртм', '1ртм', '2ртм', '
+3ртм', '4ртм', '5ртм', '6ртм', '7ртм', '8рт
+м']].to_dict()
+
+    def get_tumor_freq(self):
+        withoutLast = self.data[self.data['position'] != 10]
+        return {
+            'x': ['0ртм', '1ртм', '2ртм', '3ртм'
+, '4ртм', '5ртм', '6ртм', '7ртм', '8ртм'],
+            'y': withoutLast[withoutLast['target'] == 1]['po
+sition'].value_counts().to_dict()
+        }
+
+    def get_diagnose(self, method, test_percent, patient_dat
+a):
+        clf = self.get_fitted_model(method, test_percent)
+        xPredict = []
+        for i in patient_data['rt']:
+            xPredict.append(i.replace(',', '.'))
+        for i in patient_data['rt']:
+            xPredict.append(i.replace(',', '.'))
+        yPred = clf.predict([xPredict])
+        from sklearn.model_selection import train_test_split
+        data = self.data[self.data.position != 10]
+        xTrain, xTest, yTrain, yTest = train_test_split(
+            data[self.temp_columns],
+            data.position,
+            test_size=0.25,
+            random_state=0
+        )
+
+        diagnose_class = yPred[0]
+
+        predicted_points = MLPClassifier(alpha=1, max_iter=1
+000).fit(xTrain, yTrain).predict(xTest)
+
+        return diagnose_class, predicted_points[0], accuracy
+_score(yTest, predicted_points)
+
+    def check_or_copy_data_file(self):
+        if not os.path.isfile(self.data_dir + self.data_file
+):
+            shutil.copyfile(os.path.join('assets/data.csv'),
+                            os.path.join(self.data_dir, self
+.data_file))
 
 \end{verbatim}
 \vspace{8mm}
 \Large
-\newpage
-\addcontentsline{toc}{section}{Приложение Б (обязательное) Лист задания}
-фффф
-\newpage
-фффф
-\newpage
-\addcontentsline{toc}{section}{Приложение В (обязательное) Полученные при выполнении работы компетенции}
-ффф
+\par
+Листинг А.3 -- Код шаблонов VueJS-компонентов
+\vspace{8mm}
+\large
+\begin{verbatim}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initi
+al-scale=1, shrink-to-fit=no">
+    <title>ВКР</title>
+    <link rel="stylesheet" href="%% url_for('static', filena
+me='css/bootstrap.min.css') %%">
+    <link rel="stylesheet" href="%% url_for('static', filena
+me='css/bootstrap-vue.min.css') %%">
+    <style>
+        body{
+            background-color: #F4F4F4;
+        }
+        .plot{
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <b-container fluid>
+        <b-row>
+            <b-col cols="4">
+                <left-form :methods="methods" :patient-resul
+t="patientResultFormatted"></left-form>
+            </b-col>
+            <b-col cols="8">
+                <b-row>
+                    <b-col cols="6">Чувствительн
+ость: {{ sensitivity | toFixed }}%</b-col>
+                    <b-col cols="6">Специфичност
+ь: {{ specificity | toFixed }}%</b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="6">
+                        <vue-plotly :data="mainAccuracyData"
+ :layout="mainAccuracy.layout" uid="mainAccuracyPie" class="
+plot"/>
+                    </b-col>
+                    <b-col cols="6">
+                        <vue-plotly :data="diagnoseAccuracyD
+ata" :layout="diagnoseAccuracy.layout" uid="diagnoseAccuracy
+" class="plot"/>
+                    </b-col>
+                </b-row>
+                <b-row>
+                    <b-col cols="6">
+                        <vue-plotly :data="frequencyTumor.da
+ta" :layout="frequencyTumor.layout" uid="frequencyTumorHisto
+gram" class="plot"/>
+                    </b-col>
+                    <b-col cols="6">
+                        <vue-plotly :data="frequencyTemperat
+ure.data" :layout="frequencyTemperature.layout" uid="frequen
+cyTemperatureBox" class="plot"/>
+                    </b-col>
+                </b-row>
+            </b-col>
+        </b-row>
+    </b-container>
+</div>
+
+<template id="template-left-form">
+    <div>
+        <b-row>
+            <b-col cols="12"><label>Файл с данным
+и</label></b-col>
+            <b-col>
+                <b-form-file
+                        v-model="datafile"
+                        placeholder="Выберите csv-ф
+айл..."
+                        drop-placeholder="Перетащит
+е csv-файл сюда..."
+                        browse-text="Выбрать"
+                        ref="datafile"
+                ></b-form-file>
+            </b-col>
+            <b-col>
+                <b-button block @click="submitFile">Загр
+узить</b-button>
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col cols="6"><label>Процент тесто
+вой выборки</label></b-col>
+            <b-col cols="6"><label>Метод</label></b-col
+>
+            <b-col>
+                <b-input-group append="%">
+                    <b-form-input v-model="testPercent"></b-
+form-input>
+                </b-input-group>
+            </b-col>
+            <b-col>
+                <b-form-select v-model="selectedMethod" :opt
+ions="methodsForSelect"></b-form-select>
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col class="py-2">
+                <b-button variant="danger" @click="onTrainHa
+ndler" block>Обучить</b-button>
+            </b-col>
+            <b-col class="py-2">
+                <b-button variant="success" @click="onPredic
+tHandler" block>Запустить</b-button>
+            </b-col>
+        </b-row>
+        <recipient-form :patient-result="patientResult"/>
+    </div>
+</template>
+
+<template id="template-recipient-form">
+    <div>
+        <b-row>
+            <b-col>
+                <label>Данные пациента</label>
+            </b-col>
+        </b-row>
+        <b-row class="px-2">
+            <b-col v-for="(item, key) in rt" :key="key" styl
+e="padding-left: 5px; padding-right: 5px;">
+                <div>
+                    <label>{{ key }} РТ</label>
+                </div>
+                <b-input v-model="rt[key]"></b-input>
+            </b-col>
+        </b-row>
+        <b-row class="px-2">
+            <b-col v-for="(item, key) in ik" :key="key" styl
+e="padding-left: 5px; padding-right: 5px;">
+                <div>
+                    <label>{{ key }} ИК</label>
+                </div>
+                <b-input v-model="ik[key]"></b-input>
+            </b-col>
+        </b-row>
+        <b-row class="pt-2">
+            <b-col>
+                <b-button variant="danger" @click="onDiagnos
+eHandler" block>Диагностировать</b-button>
+            </b-col>
+            <b-col>
+                <b-input placeholder="Результат" :v
+alue="patientResult" readonly></b-input>
+            </b-col>
+        </b-row>
+    </div>
+</template>
+
+{% if debug %}
+    <script src="%% url_for('static', filename='js/vue.js') 
+%%"></script>
+{% else %}
+    <script src="%% url_for('static', filename='js/vue.min.j
+s') %%"></script>
+{% endif %}
+<script src="%% url_for('static', filename='js/axios.min.js'
+) %%"></script>
+<script src="%% url_for('static', filename='js/bootstrap-vue
+.min.js') %%"></script>
+<script src="%% url_for('static', filename='js/bootstrap-vue
+-icons.min.js') %%"></script>
+<script src="%% url_for('static', filename='js/plotly-latest
+.min.js') %%"></script>
+
+<script>
+    window.appHost = '%% host %%';
+</script>
+<script src="%% url_for('static', filename='js/components.js
+') %%"></script>
+</body>
+</html>
+\end{verbatim}
+\vspace{8mm}
+\Large
+\par
+Листинг А.3 -- Код VueJS-компонентов
+\vspace{8mm}
+\large
+\begin{verbatim}
+Vue.component("vue-plotly", {
+    props: ["data", "layout", "uid"],
+    template: '<div :ref="uid"></div>',
+    mounted() {
+        Plotly.plot(this.$refs[this.uid], this.data, this.la
+yout, {displaylogo: false, responsive: true});
+    },
+    watch: {
+        data: {
+            handler: function () {
+                Plotly.react(
+                    this.$refs[this.uid],
+                    this.data,
+                    this.layout,
+                    {displaylogo: false}
+                );
+            },
+            deep: true
+        }
+    }
+});
+
+Vue.component('left-form', {
+    props: ['methods', 'patientResult'],
+    data: function () {
+        return {
+            importFilePath: '',
+            testPercent: 25,
+            selectedMethod: 0,
+            datafile: null
+        }
+    },
+    computed: {
+        methodsForSelect: function () {
+            const methods = this.methods;
+            return Object.keys(this.methods).map(key => ({va
+lue: key, text: methods[key].name}));
+        }
+    },
+    watch: {
+        importFilePath: function (newVal) {
+            this.$root.$emit('import_file_path_changed', new
+Val);
+        },
+        testPercent: function (newVal) {
+            this.$root.$emit('test_percent_changed', newVal)
+;
+        },
+        selectedMethod: function (newVal) {
+            this.$root.$emit('selected_method_changed', newV
+al);
+        }
+    },
+    template: '#template-left-form',
+    methods: {
+        onTrainHandler: function() {
+            this.$root.$emit('do_train');
+        },
+        onPredictHandler: function() {
+            this.$root.$emit('do_predict');
+        },
+        submitFile: function () {
+            const formData = new FormData();
+            formData.append('file', this.datafile);
+
+            const self = this;
+            axios.post('/upload_data/',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data
+'
+                    }
+                }
+            )
+                .then(function () {
+                    self.$root.$emit('show_toast', 'Файл
+ успешно загружен', 'success');
+                    self.$root.$emit('get_metrics');
+                })
+                .catch(function () {
+                    self.$root.$emit('show_toast', 
+                    'Не удалось загрузить файл', 'error');
+                });
+        }
+    }
+});
+
+Vue.component('recipient-form', {
+    props: ['patientResult'],
+    data: function () {
+        return {
+            rt: [],
+            ik: []
+        }
+    },
+    computed: {
+        patientResultFull: function() {
+            return this.patientResult ? this.patientResult :
+ '';
+        }
+    },
+    watch: {
+        rt: function (newVal) {
+            this.$root.$emit('rt_changed', newVal);
+        },
+        ik: function (newVal) {
+            this.$root.$emit('ik_changed', newVal);
+        },
+    },
+    template: '#template-recipient-form',
+    created: function() {
+        for (let i = 0; i < 9; i++) {
+            this.rt.push('');
+            this.ik.push('');
+        }
+    },
+    methods: {
+        onDiagnoseHandler: function() {
+            const empty_rt = this.rt.filter(item => item.len
+gth == 0);
+            const empty_ik = this.ik.filter(item => item.len
+gth == 0);
+            if (empty_ik.length || empty_rt.length) {
+                this.$root.$emit('show_toast', 'Не все 
+данные пациента заполнены', 'error');
+            } else {
+                this.$root.$emit('do_diagnose', {
+                    rt: this.rt,
+                    ik: this.ik
+                });
+            }
+        }
+    }
+});
+
+Vue.filter('toFixed', function (value) {
+  return value.toFixed(1);
+});
+
+var app = new Vue({
+    el: '#app',
+    data: function() {
+        return {
+            importFilePath: '',
+            testPercent: 25,
+            methods: {
+                0: {
+                    name: 'svm',
+                    code: 'svm',
+                    canPredict: true,
+                    metrics: {
+                        sensitivity: 0,
+                        specificity: 0,
+                        accuracy: []
+                    }
+                },
+                1: {
+                    name: 'k-ближайших соседе
+й',
+                    code: 'knn',
+                    canPredict: true,
+                    metrics: {
+                        sensitivity: 0,
+                        specificity: 0,
+                        accuracy: []
+                    }
+                },
+                2: {
+                    name: 'Bagging meta-estimator + SVM',
+                    code: 'bagging',
+                    canPredict: true,
+                    metrics: {
+                        sensitivity: 0,
+                        specificity: 0,
+                        accuracy: []
+                    }
+                },
+                3: {
+                    name: 'Stochastic Gradient Descent',
+                    code: 'sgd',
+                    canPredict: true,
+                    metrics: {
+                        sensitivity: 0,
+                        specificity: 0,
+                        accuracy: []
+                    }
+                }
+            },
+            selectedMethod: 0,
+            apiBase: window.appHost ? window.appHost : 'http
+://127.0.0.1:5000/',
+            apiRoutes: {
+                trainData: 'train/',
+                predictData: 'predict/',
+                staticMetrics: 'static_metrics/',
+                diagnose: 'diagnose/',
+                methods: 'methods/',
+            },
+            frequencyTemperature: {
+                data: [],
+                layout: {
+                    title: 'Распределение температуры по точкам',
+                    plot_bgcolor: '#F4F4F4',
+                    paper_bgcolor: '#F4F4F4'
+                }
+            },
+            frequencyTumor: {
+                data: [],
+                layout: {
+                    title: 'Частотное распрелеление опухолей по точкам',
+                    plot_bgcolor: '#F4F4F4',
+                    paper_bgcolor: '#F4F4F4'
+                }
+            },
+            mainAccuracy: {
+                data: [
+                    {
+                        values: [],
+                        type: 'pie',
+                        labels: ['Верно', 'Неверн
+о'],
+                        showlegend: false,
+                        automargin: true
+                    }
+                ],
+                layout: {
+                    title: 'Точность "здоров/болен"',
+                    plot_bgcolor: '#F4F4F4',
+                    paper_bgcolor: '#F4F4F4'
+                }
+            },
+            diagnoseAccuracy: {
+                data: [
+                    {
+                        values: [],
+                        type: 'pie',
+                        labels: ['Верно', 'Неверн
+о'],
+                        showlegend: false,
+                        automargin: true
+                    }
+                ],
+                layout: {
+                    title: 'Точность локализации',
+                    plot_bgcolor: '#F4F4F4',
+                    paper_bgcolor: '#F4F4F4'
+                }
+            },
+            patientResult: {
+                class: null,
+                point: null,
+                accuracy: []
+            }
+        }
+    },
+    computed: {
+        sensitivity: function () {
+            return typeof this.methods[this.selectedMethod].
+metrics.sensitivity != 'undefined' ? this.methods[this.selec
+tedMethod].metrics.sensitivity : 0;
+        },
+        specificity: function () {
+            return typeof this.methods[this.selectedMethod].
+metrics.specificity != 'undefined' ? this.methods[this.selec
+tedMethod].metrics.specificity : 0;
+        },
+        mainAccuracyData: function () {
+            const values = this.methods[this.selectedMethod]
+.metrics.accuracy.length ? this.methods[this.selectedMethod]
+.metrics.accuracy : [1, 0];
+            const data = [...this.mainAccuracy.data];
+            data[0].values = values;
+            return data;
+        },
+        diagnoseAccuracyData: function () {
+            const values = this.patientResult.accuracy.lengt
+h ? this.patientResult.accuracy : [1, 0];
+            const data = [...this.diagnoseAccuracy.data];
+            data[0].values = values;
+            return data;
+        },
+        patientResultFormatted: function () {
+            return this.patientResult.class ? this.patientRe
+sult.class + ', в точке ' + this.patientResult.point :
+ '';
+        }
+    },
+    created: function () {
+        this.$on('import_file_path_changed', function (data)
+ {
+            this.importFilePath = data;
+        });
+        this.$on('test_percent_changed', function (data) {
+            this.testPercent = parseInt(data);
+        });
+        this.$on('selected_method_changed', function (data) 
+{
+            this.selectedMethod = parseInt(data);
+        });
+        this.$on('do_train', function () {
+            this.doTrain();
+        });
+        this.$on('do_predict', function () {
+            this.doPredict();
+        });
+        this.$on('do_diagnose', function (data) {
+            this.doDiagnose(data);
+        });
+        this.$on('show_toast', function (message, type) {
+            this.showToast(message, type);
+        });
+        this.$on('get_metrics', function () {
+            this.getStaticMetrics();
+        });
+    },
+    mounted: function () {
+        this.getMethods();
+        this.getStaticMetrics();
+    },
+    methods: {
+        sendRequest: function(endPoint, payload, callback) {
+            axios.post(this.apiBase + endPoint, payload)
+                .then(callback)
+                .catch((error) => {
+                    this.showToast(error, 'error');
+                });
+        },
+        doTrain: function () {
+            this.sendRequest(
+                this.apiRoutes.trainData,
+                {
+                    method: this.methods[this.selectedMethod
+].code,
+                    methodId: this.selectedMethod,
+                    testPercent: this.testPercent
+                },
+                (res) => {
+                    if (res.data.status == 'success') {
+                        this.methods[res.data.method.id].can
+Predict = true;
+                        this.showToast('Обучение 
+                        прошло успешно. Теперь можно запус
+тить', 'success');
+                    } else {
+                        this.showToast('Попробуйте
+ позже', 'error');
+                    }
+                }
+            );
+        },
+        doPredict: function () {
+            if (this.methods[this.selectedMethod].canPredict
+) {
+                this.sendRequest(
+                    this.apiRoutes.predictData,
+                    {
+                        method: this.methods[this.selectedMe
+thod].code,
+                        testPercent: this.testPercent
+                    },
+                    (res) => {
+                        if (res.data.status == 'success') {
+                            this.methods[this.selectedMethod
+].metrics['accuracy'] = [res.data.metrics.accuracy, 1 - res.
+data.metrics.accuracy];
+                            if (typeof res.data.metrics.sens
+itivity != undefined) {
+                                this.methods[this.selectedMe
+thod].metrics['sensitivity'] = res.data.metrics.sensitivity;
+                            }
+                            if (typeof res.data.metrics.spec
+ificity != undefined) {
+                                this.methods[this.selectedMe
+thod].metrics['specificity'] = res.data.metrics.specificity;
+                            }                            
+                            this.showToast('Данные 
+                            успешно получены', 'success');
+                        } else if (res.data.status == 'warni
+ng') {
+                            this.showToast(res.data.message,
+ 'warning');
+                        } else {
+                            this.showToast('Попробуй
+те позже', 'error');
+                        }
+                    }
+                );
+            } else {
+                this.showToast('Нужно сначала о
+бучить', 'warning');
+            }
+        },
+        doDiagnose: function (data) {
+            this.sendRequest(
+                this.apiRoutes.diagnose,
+                {
+                    method: this.methods[this.selectedMethod
+].code,
+                    patientData: data,
+                    testPercent: this.testPercent
+                },
+                (res) => {
+                    if (res.data.status == 'success') {
+                        this.patientResult.class = res.data.
+result.class == 1 ? 'Болен' : 'Здоров';
+                        this.patientResult.point = res.data.
+result.point;
+                        this.patientResult.accuracy = [res.d
+ata.result.accuracy, 1 - res.data.result.accuracy];
+                        this.showToast('Данные получены', 
+                        'success');
+                    } else if (res.data.status == 'warning')
+ {
+                        this.showToast(res.data.message, 'wa
+rning');
+                    } else {
+                        this.showToast('Попробуйте
+ позже', 'error');
+                    }
+                }
+            );
+        },
+        getStaticMetrics: function() {
+            this.sendRequest(
+                this.apiRoutes.staticMetrics,
+                {},
+                (res) => {
+                    if (res.data.status == 'success') {
+                        if (typeof res.data.metrics.frequenc
+yTemperature != undefined) {
+                            const freqData = [];
+                            for (let i in res.data.metrics.f
+requencyTemperature) {
+                                freqData.push({
+                                    y: Object.values(res.dat
+a.metrics.frequencyTemperature[i]),
+                                    type: 'box',
+                                    name: i,
+                                    automargin: true
+                                });
+                            }
+                            this.frequencyTemperature.data =
+ freqData;
+                        }
+                        if (typeof res.data.metrics.frequenc
+yTumor != undefined) {
+                            this.frequencyTumor.data = [{
+                                x: Object.values(res.data.me
+trics.frequencyTumor.x),
+                                y: Object.values(res.data.me
+trics.frequencyTumor.y),
+                                type: 'bar',
+                                automargin: true
+                            }];
+                        }
+                    } else {
+                        this.showToast('Произошла ошибка
+                         во время получения статистических
+                          данных', 'error');
+                    }
+                }
+            );
+        },
+        getMethods: function() {
+            this.sendRequest(
+                this.apiRoutes.methods,
+                {},
+                (res) => {
+                    if (res.data.status == 'success') {
+                        if (typeof res.data.methods != undef
+ined) {
+                            this.methods = res.data.methods;
+                        }
+                    } else {
+                        this.showToast('Произошла ошибка
+                         во время получения 
+                         статистических данных', 'error');
+                    }
+                }
+            );
+        },
+        showToast: function (message, type) {
+            const types = {
+                error: {
+                    title: 'Ошибка',
+                    variant: 'danger'
+                },
+                warning: {
+                    title: 'Предупреждение',
+                    variant: 'warning'
+                },
+                success: {
+                    title: 'Успешно',
+                    variant: 'success'
+                }
+            };
+            if (typeof types[type] != 'undefined') {
+                this.$bvToast.toast(message, {
+                    title: types[type].title,
+                    autoHideDelay: 5000,
+                    variant: types[type].variant
+                });
+            }
+        }
+    }
+});
+\end{verbatim}
+\vspace{8mm}
+\Large
+%\newpage
+%\addcontentsline{toc}{section}{Приложение Б (обязательное) Лист задания}
+%фффф
+%\newpage
+%фффф
+%\newpage
+%\addcontentsline{toc}{section}{Приложение В (обязательное) Полученные при выполнении работы компетенции}
+%ффф

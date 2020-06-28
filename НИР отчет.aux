@@ -71,8 +71,6 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Пример данных температурных данных компьютерного моделирования, где в столбце «target» здоровые — «0», больные — «1»\relax }}{\hfil \Large  18\hfil }\protected@file@percent }
 \newlabel{ris:data_example}{{6}{\hfil \Large  18\hfil }}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Проектирование структуры программы и интерфейса}{\hfil \Large  19\hfil }\protected@file@percent }
-\newlabel{eq:senseq}{{5}{\hfil \Large  19\hfil }}
-\newlabel{eq:speceq}{{6}{\hfil \Large  19\hfil }}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Диаграмма деятельности для программы\relax }}{\hfil \Large  20\hfil }\protected@file@percent }
 \newlabel{ris:activity-diagram}{{7}{\hfil \Large  20\hfil }}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Макет интерфейса программы\relax }}{\hfil \Large  21\hfil }\protected@file@percent }
@@ -101,21 +99,39 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {17}{\ignorespaces Результат запуска Unit-тестов в IDE PyCharm\relax }}{\hfil \Large  31\hfil }\protected@file@percent }
 \newlabel{ris:tests-result}{{17}{\hfil \Large  31\hfil }}
 \@writefile{toc}{\contentsline {section}{\numberline {3}\Large  Применение методов машинного обучения для классификации данных компьютерного моделирования}{\hfil \Large  32\hfil }\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Обучение модели и классификация тестовой выборки}{\hfil \Large  32\hfil }\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Скриншот интерфейса программы при выборе файла с данными для загрузки\relax }}{\hfil \Large  32\hfil }\protected@file@percent }
-\newlabel{ris:upload_data_screenshot}{{18}{\hfil \Large  32\hfil }}
-\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Сообщение об успешной загрузке файла на сервер\relax }}{\hfil \Large  33\hfil }\protected@file@percent }
-\newlabel{ris:upload_success}{{19}{\hfil \Large  33\hfil }}
-\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Скриншот графиков со статистическими метриками, вычисленных на основе загруженных данных\relax }}{\hfil \Large  33\hfil }\protected@file@percent }
-\newlabel{ris:statistics_metrics}{{20}{\hfil \Large  33\hfil }}
-\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Элементы управления для выбора размера тестовой выборки, обучения модели и классификации тестовой выборки\relax }}{\hfil \Large  34\hfil }\protected@file@percent }
-\newlabel{ris:fir_predict_interface}{{21}{\hfil \Large  34\hfil }}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large  34\hfil }\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Круговая диаграмма с точностью классификации для наивного байесовского классификатора\relax }}{\hfil \Large  35\hfil }\protected@file@percent }
-\newlabel{ris:bayes_accuracy}{{22}{\hfil \Large  35\hfil }}
-\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Круговая диаграмма с точностью классификации при определении локализации опухоли\relax }}{\hfil \Large  36\hfil }\protected@file@percent }
-\newlabel{ris:location_accuracy}{{23}{\hfil \Large  36\hfil }}
-\@writefile{toc}{\contentsline {section}{Заключение}{\hfil \Large  37\hfil }\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Показатели информативности диагностики}{\hfil \Large  32\hfil }\protected@file@percent }
+\newlabel{eq:senseq}{{5}{\hfil \Large  32\hfil }}
+\newlabel{eq:speceq}{{6}{\hfil \Large  32\hfil }}
+\newlabel{eq:accuracyeq}{{7}{\hfil \Large  32\hfil }}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Частотный анализ классифицируемых данных}{\hfil \Large  33\hfil }\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {18}{\ignorespaces Диаграмма частот температур в точке 0ртм. Верхняя диаграмма — здоровые пациенты, нижняя — больные\relax }}{\hfil \Large  34\hfil }\protected@file@percent }
+\newlabel{ris:0rtm}{{18}{\hfil \Large  34\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {19}{\ignorespaces Диаграмма частот температур в точке 3ртм. Верхняя диаграмма — здоровые пациенты, нижняя — больные\relax }}{\hfil \Large  35\hfil }\protected@file@percent }
+\newlabel{ris:3rtm}{{19}{\hfil \Large  35\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {20}{\ignorespaces Диаграмма частот температур в точке 7ртм. Верхняя диаграмма — здоровые пациенты, нижняя — больные\relax }}{\hfil \Large  36\hfil }\protected@file@percent }
+\newlabel{ris:7rtm}{{20}{\hfil \Large  36\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {21}{\ignorespaces Графики распределения модельных и реальных данных. График слева -- распределение до кластеризации, справа -- распределение после кластеризации\relax }}{\hfil \Large  37\hfil }\protected@file@percent }
+\newlabel{ris:clustering_result}{{21}{\hfil \Large  37\hfil }}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Обучение модели и классификация тестовой выборки}{\hfil \Large  37\hfil }\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {22}{\ignorespaces Скриншот интерфейса программы при выборе файла с данными для загрузки\relax }}{\hfil \Large  38\hfil }\protected@file@percent }
+\newlabel{ris:upload_data_screenshot}{{22}{\hfil \Large  38\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {23}{\ignorespaces Сообщение об успешной загрузке файла на сервер\relax }}{\hfil \Large  38\hfil }\protected@file@percent }
+\newlabel{ris:upload_success}{{23}{\hfil \Large  38\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {24}{\ignorespaces Скриншот графиков со статистическими метриками, вычисленных на основе загруженных данных\relax }}{\hfil \Large  39\hfil }\protected@file@percent }
+\newlabel{ris:statistics_metrics}{{24}{\hfil \Large  39\hfil }}
+\@writefile{lof}{\contentsline {figure}{\numberline {25}{\ignorespaces Элементы управления для выбора размера тестовой выборки, обучения модели и классификации тестовой выборки\relax }}{\hfil \Large  39\hfil }\protected@file@percent }
+\newlabel{ris:fir_predict_interface}{{25}{\hfil \Large  39\hfil }}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large  40\hfil }\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {26}{\ignorespaces Круговая диаграмма с точностью классификации для наивного байесовского классификатора\relax }}{\hfil \Large  40\hfil }\protected@file@percent }
+\newlabel{ris:bayes_accuracy}{{26}{\hfil \Large  40\hfil }}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Зависимость результата классификации от соотношения обучающей и тестовой выборок}{\hfil \Large  40\hfil }\protected@file@percent }
+\newlabel{tab:exp2values}{{\caption@xref {tab:exp2values}{ on input line 65}}{\hfil \Large  41\hfil }}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Зависимость результата классификации от соотношения количества больных и здоровых пациентов в выборке}{\hfil \Large  42\hfil }\protected@file@percent }
+\newlabel{tab:exp2values}{{\caption@xref {tab:exp2values}{ on input line 115}}{\hfil \Large  43\hfil }}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.3}Определение точки с опухолью}{\hfil \Large  43\hfil }\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {27}{\ignorespaces Круговая диаграмма с точностью классификации при определении локализации опухоли\relax }}{\hfil \Large  44\hfil }\protected@file@percent }
+\newlabel{ris:location_accuracy}{{27}{\hfil \Large  44\hfil }}
+\@writefile{toc}{\contentsline {section}{Заключение}{\hfil \Large  45\hfil }\protected@file@percent }
 \bibcite{bardati}{1}
 \bibcite{kristianini}{2}
 \bibcite{crammer}{3}
@@ -125,7 +141,7 @@
 \bibcite{kumbhar}{7}
 \bibcite{leroy1998}{8}
 \bibcite{lev-polyakov-losev-hoperskov}{9}
-\@writefile{toc}{\contentsline {subsection}{Список литературы}{\hfil \Large  38\hfil }\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{Список литературы}{\hfil \Large  46\hfil }\protected@file@percent }
 \bibcite{Mirmozaffari}{10}
 \bibcite{mossina}{11}
 \bibcite{nisrenml}{12}
@@ -162,4 +178,5 @@
 \bibcite{rozenblatt}{43}
 \bibcite{flah}{44}
 \bibcite{shlezinger}{45}
+\@writefile{toc}{\contentsline {section}{Приложение А (обязательное) Программный код}{\hfil \Large  52\hfil }\protected@file@percent }
 \ttl@finishall
