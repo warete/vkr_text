@@ -15,7 +15,7 @@
 \DeclareGraphicsExtensions{.eps,.bmp,.jpg,.png}
 \usepackage{caption}
 %Подпись к картинкам
-\captionsetup[figure]{name=Рисунок,labelsep=endash,font={Large}}
+\captionsetup[figure]{name=Рисунок,labelsep=endash,font={Large},singlelinecheck=off,justification=centering}
 \usepackage{listings}
 
 \usepackage{listings}
@@ -131,12 +131,12 @@
 \thispagestyle{empty} % не ставим номер страницы
 \usepackage{float}%"Плавающие" картинки
 \newcommand{\imgh}[3]{
-\begin{figure}[H]
-\center{
-\includegraphics[width=#1]{#2}}
-\caption{#3}
-\label{ris:#2}
-\end{figure}
+	\begin{figure}[H]
+		\center{
+			\includegraphics[width=#1]{#2}}
+		\caption{#3}
+		\label{ris:#2}
+	\end{figure}
 }
 
 \makeatletter
@@ -162,11 +162,14 @@
 \begin{document}
 \renewcommand*\contentsname{\parindent=1.25cm Содержание}
 \Large
-\setcounter{page}{2} % начать нумерацию с номера три
+%\setcounter{page}{2} % начать нумерацию с номера три
 
-\newpage
+\includepdf[pages=-]{title_page.pdf}
+\includepdf[pages=-]{tz.pdf}
+
+%\newpage
 % это оглавление, которое генерируется автоматически
-\tableofcontents 
+\tableofcontents
 \Large
 \setcounter{secnumdepth}{-1}
 
@@ -183,7 +186,8 @@
 
 %Глава 3
 \input{3-chapter}
-
+%Глава 4
+\input{4-chapter}
 \setcounter{secnumdepth}{-1}
 
 %Заключение

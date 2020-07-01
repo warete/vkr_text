@@ -1,35 +1,37 @@
 \babel@toc {russian}{}
-\contentsline {section}{Введение}{\hfil \Large 4\hfil }%
-\contentsline {section}{\numberline {1}\Large Методы и области применения машинного обучения}{\hfil \Large 5\hfil }%
-\contentsline {subsection}{\numberline {1.1}Обзор литературы}{\hfil \Large 5\hfil }%
-\contentsline {subsection}{\numberline {1.2}Области применения}{\hfil \Large 7\hfil }%
-\contentsline {subsection}{\numberline {1.3}Методы классификации в машинном обучении}{\hfil \Large 7\hfil }%
-\contentsline {subsection}{\numberline {1.4}Метод опорных векторов}{\hfil \Large 9\hfil }%
-\contentsline {subsection}{\numberline {1.5}Метод k-ближайших соседей}{\hfil \Large 11\hfil }%
-\contentsline {subsection}{\numberline {1.6}Наивный байесовский классификатор}{\hfil \Large 12\hfil }%
-\contentsline {subsection}{\numberline {1.7}Популярные библиотеки с реализацией методов машинного обучения}{\hfil \Large 13\hfil }%
-\contentsline {subsubsection}{\numberline {1.7.1}TensorFlow}{\hfil \Large 14\hfil }%
-\contentsline {subsubsection}{\numberline {1.7.2}Keras}{\hfil \Large 15\hfil }%
-\contentsline {subsubsection}{\numberline {1.7.3}Scikit-learn}{\hfil \Large 15\hfil }%
-\contentsline {subsubsection}{\numberline {1.7.4}PyTorch}{\hfil \Large 15\hfil }%
-\contentsline {subsubsection}{\numberline {1.7.5}Theano}{\hfil \Large 16\hfil }%
-\contentsline {section}{\numberline {2}\Large Проектирование и разработка программы для обработки данных компьютерного моделирования биотканей}{\hfil \Large 17\hfil }%
-\contentsline {subsection}{\numberline {2.1}Формат входных данных для программы}{\hfil \Large 17\hfil }%
-\contentsline {subsection}{\numberline {2.2}Проектирование структуры программы и интерфейса}{\hfil \Large 19\hfil }%
-\contentsline {subsection}{\numberline {2.3}Выбор технологий и архитектуры}{\hfil \Large 21\hfil }%
-\contentsline {subsection}{\numberline {2.4}Разработка программы}{\hfil \Large 25\hfil }%
-\contentsline {subsubsection}{\numberline {2.4.1}Реализация API-интерфейса}{\hfil \Large 26\hfil }%
-\contentsline {subsubsection}{\numberline {2.4.2}Разработка фронтенд-части и связь с API}{\hfil \Large 27\hfil }%
-\contentsline {subsubsection}{\numberline {2.4.3}Разработка Unit-тестов}{\hfil \Large 30\hfil }%
-\contentsline {section}{\numberline {3}\Large Применение методов машинного обучения для классификации данных компьютерного моделирования}{\hfil \Large 32\hfil }%
-\contentsline {subsection}{\numberline {3.1}Показатели информативности диагностики}{\hfil \Large 32\hfil }%
-\contentsline {subsection}{\numberline {3.2}Частотный анализ классифицируемых данных}{\hfil \Large 33\hfil }%
-\contentsline {subsection}{\numberline {3.3}Обучение модели и классификация тестовой выборки}{\hfil \Large 37\hfil }%
-\contentsline {subsection}{\numberline {3.4}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large 40\hfil }%
-\contentsline {subsubsection}{\numberline {3.4.1}Зависимость результата классификации от соотношения обучающей и тестовой выборок}{\hfil \Large 40\hfil }%
-\contentsline {subsubsection}{\numberline {3.4.2}Зависимость результата классификации от соотношения количества больных и здоровых пациентов в выборке}{\hfil \Large 42\hfil }%
-\contentsline {subsubsection}{\numberline {3.4.3}Определение точки с опухолью}{\hfil \Large 43\hfil }%
-\contentsline {section}{Заключение}{\hfil \Large 45\hfil }%
-\contentsline {subsection}{Список литературы}{\hfil \Large 46\hfil }%
-\contentsline {section}{Приложение А (обязательное) Программный код}{\hfil \Large 52\hfil }%
+\contentsline {section}{Введение}{\hfil \Large 8\hfil }%
+\contentsline {section}{\numberline {1}\Large Методы и области применения машинного обучения}{\hfil \Large 9\hfil }%
+\contentsline {subsection}{\numberline {1.1}Обзор литературы}{\hfil \Large 9\hfil }%
+\contentsline {subsection}{\numberline {1.2}Области применения}{\hfil \Large 11\hfil }%
+\contentsline {subsection}{\numberline {1.3}Методы классификации в машинном обучении}{\hfil \Large 11\hfil }%
+\contentsline {subsection}{\numberline {1.4}Метод опорных векторов}{\hfil \Large 13\hfil }%
+\contentsline {subsection}{\numberline {1.5}Метод k-ближайших соседей}{\hfil \Large 14\hfil }%
+\contentsline {subsection}{\numberline {1.6}Наивный байесовский классификатор}{\hfil \Large 16\hfil }%
+\contentsline {subsection}{\numberline {1.7}Популярные библиотеки с реализацией методов машинного обучения}{\hfil \Large 16\hfil }%
+\contentsline {subsubsection}{\numberline {1.7.1}TensorFlow}{\hfil \Large 17\hfil }%
+\contentsline {subsubsection}{\numberline {1.7.2}Keras}{\hfil \Large 18\hfil }%
+\contentsline {subsubsection}{\numberline {1.7.3}Scikit-learn}{\hfil \Large 18\hfil }%
+\contentsline {subsubsection}{\numberline {1.7.4}PyTorch}{\hfil \Large 19\hfil }%
+\contentsline {subsubsection}{\numberline {1.7.5}Theano}{\hfil \Large 19\hfil }%
+\contentsline {section}{\numberline {2}\Large Проектирование и разработка программы для обработки данных компьютерного моделирования биотканей}{\hfil \Large 20\hfil }%
+\contentsline {subsection}{\numberline {2.1}Формат входных данных для программы}{\hfil \Large 20\hfil }%
+\contentsline {subsection}{\numberline {2.2}Проектирование структуры программы и интерфейса}{\hfil \Large 22\hfil }%
+\contentsline {subsection}{\numberline {2.3}Выбор технологий и архитектуры}{\hfil \Large 24\hfil }%
+\contentsline {subsection}{\numberline {2.4}Разработка программы}{\hfil \Large 28\hfil }%
+\contentsline {subsubsection}{\numberline {2.4.1}Реализация API-интерфейса}{\hfil \Large 29\hfil }%
+\contentsline {subsubsection}{\numberline {2.4.2}Разработка фронтенд-части и связь с API}{\hfil \Large 30\hfil }%
+\contentsline {subsubsection}{\numberline {2.4.3}Разработка Unit-тестов}{\hfil \Large 33\hfil }%
+\contentsline {section}{\numberline {3}\Large Применение методов машинного обучения для классификации данных компьютерного моделирования}{\hfil \Large 35\hfil }%
+\contentsline {subsection}{\numberline {3.1}Показатели информативности диагностики}{\hfil \Large 35\hfil }%
+\contentsline {subsection}{\numberline {3.2}Частотный анализ классифицируемых данных}{\hfil \Large 36\hfil }%
+\contentsline {subsection}{\numberline {3.3}Обучение модели и классификация тестовой выборки}{\hfil \Large 40\hfil }%
+\newpage 
+\contentsline {subsection}{\numberline {3.4}Определение класса «Болен»/«Здоров» и точки с опухолью}{\hfil \Large 43\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.1}Зависимость результата классификации от соотношения обучающей и тестовой выборок}{\hfil \Large 43\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.2}Зависимость результата классификации от соотношения количества больных и здоровых пациентов в выборке}{\hfil \Large 45\hfil }%
+\contentsline {subsubsection}{\numberline {3.4.3}Определение точки с опухолью}{\hfil \Large 46\hfil }%
+\contentsline {section}{\numberline {4}\Large Полученные при выполнении работы компетенции}{\hfil \Large 48\hfil }%
+\contentsline {section}{Заключение}{\hfil \Large 51\hfil }%
+\contentsline {subsection}{Список литературы}{\hfil \Large 52\hfil }%
+\contentsline {section}{Приложение А (обязательное) Программный код}{\hfil \Large 58\hfil }%
 \contentsfinish 
