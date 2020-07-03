@@ -30,7 +30,7 @@
 \contentsline {subsubsection}{\numberline {3.4.1}Зависимость результата классификации от соотношения обучающей и тестовой выборок}{\hfil \Large 43\hfil }%
 \contentsline {subsubsection}{\numberline {3.4.2}Зависимость результата классификации от соотношения количества больных и здоровых пациентов в выборке}{\hfil \Large 45\hfil }%
 \contentsline {subsubsection}{\numberline {3.4.3}Определение точки с опухолью}{\hfil \Large 46\hfil }%
-\contentsline {section}{\numberline {4}\Large Полученные при выполнении работы компетенции}{\hfil \Large 48\hfil }%
+\contentsline {section}{\numberline {4}\Large Обеспечение освоения компетенций при выполнении выпускной квалификационной работы}{\hfil \Large 48\hfil }%
 \contentsline {section}{Заключение}{\hfil \Large 51\hfil }%
 \contentsline {subsection}{Список литературы}{\hfil \Large 52\hfil }%
 \contentsline {section}{Приложение А (обязательное) Программный код}{\hfil \Large 58\hfil }%
